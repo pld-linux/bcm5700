@@ -13,6 +13,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
+# Source0-md5:	9aa1e1b2183675df8e1cfd2974ca6a2e
 URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers }
 BuildRequires:	%{kgcc_package}
