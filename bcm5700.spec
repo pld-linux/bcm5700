@@ -7,7 +7,7 @@ Summary:	Linux driver for the 3Com Gigabit Server BCM5700 (3c996) Network Interf
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700 (3c996)
 Name:		kernel-net-%{_orig_name}
 Version:	2.2.19
-%define	_rel	2
+%define	_rel	3
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL
 Group:		Base/Kernel
