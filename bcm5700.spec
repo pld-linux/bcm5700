@@ -15,7 +15,7 @@ Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 # Source0-md5:	9aa1e1b2183675df8e1cfd2974ca6a2e
 URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
-%{!?_without_dist_kernel:BuildRequires:         kernel-headers }
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers }
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
@@ -65,7 +65,7 @@ install %{_orig_name}-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/%
 install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/%{_orig_name}.o
 install src/%{_orig_name}.4.gz $RPM_BUILD_ROOT%{_mandir}/man4
 
-%clean 
+%clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
@@ -88,6 +88,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n kernel-smp-net-%{_orig_name}
 %defattr(644,root,root,755)
-%doc RELEASE.TXT 
+%doc RELEASE.TXT
 /lib/modules/%{_kernel_ver}smp/misc/*
 %{_mandir}/man?/*
