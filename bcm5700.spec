@@ -1,6 +1,7 @@
-# conditional build
+#
+# Conditional build:
 # _without_dist_kernel          without distribution kernel
-
+#
 %define		_orig_name	bcm5700
 
 Summary:	Linux driver for the 3Com Gigabit Server BCM5700 (3c996) Network Interface Cards
@@ -66,16 +67,16 @@ install src/%{_orig_name}.4.gz $RPM_BUILD_ROOT%{_mandir}/man4
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
 %postun
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
-%post -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a
+%post	-n kernel-smp-net-%{_orig_name}
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver}smp %{_kernel_ver}smp
 
 %postun -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver}smp %{_kernel_ver}smp
 
 %files
 %defattr(644,root,root,755)
