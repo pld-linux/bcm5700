@@ -3,7 +3,7 @@
 # _without_dist_kernel          without distribution kernel
 
 %define		_orig_name	bcm5700
-%define		_rel 5
+%define		_rel 6
 
 Summary:	Linux driver for the 3Com Gigabit Server BCM5700 (3c996) Network Interface Cards
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700 (3c996)
