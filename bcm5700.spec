@@ -16,7 +16,7 @@ License:	GPL
 Group:		Base/Kernel
 # extracted from http://www.broadcom.com/docs/driver_download/570x/linux-7.3.5.zip
 Source0:	%{name}-%{version}.tar.gz
-# Source0-md5:	9aa1e1b2183675df8e1cfd2974ca6a2e
+# Source0-md5:	28678cb977e24b27e40fdf27a5237a4d
 Source1:	%{name}-Makefile
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
