@@ -7,15 +7,17 @@ Summary:	Linux driver for the 3Com Gigabit Server BCM5700 (3c996) Network Interf
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700 (3c996)
 Name:		kernel-net-%{_orig_name}
 Version:	2.2.19
-%define	_rel	3
+%define	_rel	4
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
+# Source0-md5:	192f8d94a801f6494aa3f8faa8ffc804
 Patch0:		%{_orig_name}-vlan-mtu.patch
 URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers }
 BuildRequires:	%{kgcc_package}
+BuildRequires:	rpmbuild(macros) >= 1.118
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -68,16 +70,16 @@ install src/%{_orig_name}.4.gz $RPM_BUILD_ROOT%{_mandir}/man4
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/depmod -a
+%depmod %{_kernel_ver}
 
 %postun
-/sbin/depmod -a
+%depmod %{_kernel_ver}
 
 %post -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a
+%depmod %{_kernel_ver}smp
 
 %postun -n kernel-smp-net-%{_orig_name}
-/sbin/depmod -a
+%depmod %{_kernel_ver}smp
 
 %files
 %defattr(644,root,root,755)
