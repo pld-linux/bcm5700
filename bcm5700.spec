@@ -35,7 +35,7 @@ Obs³uguje karty o symbolach 3C996B-T i 3C996-SX.
 Summary:        Linux SMP driver for the 3Com Gigabit Server BCM5700 (3C996) Network Interface Cards.
 Summary(pl):    Sterownik dla Linuxa SMP dla kart sieciowych gigabit ethernet BCM5700 (3C996).
 Release:        %{_rel}@%{_kernel_ver_str}
-%{!?_without_dist_kernel:Conflicts:     kernel < %{_kernel-ver}, kernel > %{_lernel_ver}}
+%{!?_without_dist_kernel:Conflicts:     kernel < %{_kernel_ver}, kernel > %{_kernel_ver}}
 %{!?_without_dist_kernel:Conflicts:     kernel-up}
 Obsoletes: 	kernel-net-%{_orig_name}
 Group:		Base/Kernel
