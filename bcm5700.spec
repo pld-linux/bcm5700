@@ -16,7 +16,7 @@ License:	GPL
 Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers }
-BuildRequires:	egcs
+BuildRequires:	%{kgcc}
 Obsoletes:	kernel-smp-net-%{_orig_name}
 Prereq:		/sbin/depmod
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
@@ -52,10 +52,10 @@ Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700
 
 %build
 cd src
-%{__make} CC="kgcc %{rpmcflags} -Wall -I%{_kernelsrcdir}/include -D__SMP__ -DCONFIG_X86_LOCAL_APIC"
+%{__make} CC="%{kgcc} %{rpmcflags} -Wall -I%{_kernelsrcdir}/include -D__SMP__ -DCONFIG_X86_LOCAL_APIC"
 mv -f %{_orig_name}.o ../%{_orig_name}-smp.o
 %{__make} clean
-%{__make} CC="kgcc %{rpmcflags} -Wall -I%{_kernelsrcdir}/include"
+%{__make} CC="%{kgcc} %{rpmcflags} -Wall -I%{_kernelsrcdir}/include"
 
 %install
 rm -rf $RPM_BUILD_ROOT
