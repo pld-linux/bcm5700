@@ -14,40 +14,68 @@ Version:	2.0.28
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL
 Group:		Base/Kernel
+Group(cs):	Základ/Jádro
+Group(da):	Basal/Kerne
 Group(de):	Grundsätzlich/Kern
+Group(es):	Base/Núcleo
+Group(fr):	Base/Noyau
+Group(is):	Grunnforrit/Kjarninn
+Group(it):	Base/Kernel
+Group(ja):	¥Ù¡¼¥¹/¥«¡¼¥Í¥ë
+Group(no):	Basis/Kjerne
 Group(pl):	Podstawowe/J±dro
+Group(pt):	Base/Núcleo
+Group(ru):	âÁÚÁ/ñÄÒÏ
+Group(sl):	Osnova/Jedro
+Group(sv):	Bas/Kärna
+Group(uk):	âÁÚÁ/ñÄÒÏ
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers }
-Obsoletes: 	kernel-smp-net-%{_orig_name}
+Obsoletes:	kernel-smp-net-%{_orig_name}
 Prereq:		/sbin/depmod
 %{!?_without_dist_kernel:Conflicts:	kernel < %{_kernel_ver}, kernel > %{_kernel_ver}}
 %{!?_without_dist_kernel:Conflicts:	kernel-smp}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Linux driver for the 3Com Gigabit Server BCM5700 (3C996) Network Interface Cards.
+Linux driver for the 3Com Gigabit Server BCM5700 (3C996) Network
+Interface Cards.
 
 %description -l pl
-Sterownik dla Linuxa dla kart sieciowych gigabit ethernet BCM5700 (3C996).
-Obs³uguje karty o symbolach 3C996B-T i 3C996-SX.
+Sterownik dla Linuxa dla kart sieciowych gigabit ethernet BCM5700
+(3C996). Obs³uguje karty o symbolach 3C996B-T i 3C996-SX.
 
 %package -n kernel-smp-net-%{_orig_name}
-Summary:        Linux SMP driver for the 3Com Gigabit Server BCM5700 (3C996) Network Interface Cards.
-Summary(pl):    Sterownik dla Linuxa SMP dla kart sieciowych gigabit ethernet BCM5700 (3C996).
-Release:        %{_rel}@%{_kernel_ver_str}
+Summary:	Linux SMP driver for the 3Com Gigabit Server BCM5700 (3C996) Network Interface Cards.
+Summary(pl):	Sterownik dla Linuxa SMP dla kart sieciowych gigabit ethernet BCM5700 (3C996).
+Release:	%{_rel}@%{_kernel_ver_str}
 %{!?_without_dist_kernel:Conflicts:     kernel < %{_kernel_ver}, kernel > %{_kernel_ver}}
 %{!?_without_dist_kernel:Conflicts:     kernel-up}
-Obsoletes: 	kernel-net-%{_orig_name}
+Obsoletes:	kernel-net-%{_orig_name}
 Group:		Base/Kernel
+Group(cs):	Základ/Jádro
+Group(da):	Basal/Kerne
 Group(de):	Grundsätzlich/Kern
+Group(es):	Base/Núcleo
+Group(fr):	Base/Noyau
+Group(is):	Grunnforrit/Kjarninn
+Group(it):	Base/Kernel
+Group(ja):	¥Ù¡¼¥¹/¥«¡¼¥Í¥ë
+Group(no):	Basis/Kjerne
 Group(pl):	Podstawowe/J±dro
+Group(pt):	Base/Núcleo
+Group(ru):	âÁÚÁ/ñÄÒÏ
+Group(sl):	Osnova/Jedro
+Group(sv):	Bas/Kärna
+Group(uk):	âÁÚÁ/ñÄÒÏ
 
 %description -n kernel-smp-net-%{_orig_name}
-Linux SMP driver for the 3Com Gigabit Server BCM5700 (3C996) Network Interface Cards.
+Linux SMP driver for the 3Com Gigabit Server BCM5700 (3C996) Network
+Interface Cards.
 
 %description -n kernel-smp-net-%{_orig_name} -l pl
-Sterownik dla Linuxa dla kart sieciowych gigabit ethernet BCM5700 (3C996).
-Obs³uguje karty o symbolach 3C996B-T i 3C996-SX.
+Sterownik dla Linuxa dla kart sieciowych gigabit ethernet BCM5700
+(3C996). Obs³uguje karty o symbolach 3C996B-T i 3C996-SX.
 
 %prep
 %setup -q -n %{_orig_name}-%{version} -c
