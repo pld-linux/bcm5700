@@ -1,25 +1,58 @@
-diff -uNr bcm5700-2.0.28.orig/src/b57um.c bcm5700-2.0.28/src/b57um.c
---- bcm5700-2.0.28.orig/src/b57um.c	Sat Nov  3 06:05:21 2001
-+++ bcm5700-2.0.28/src/b57um.c	Sat Apr 27 14:35:35 2002
-@@ -2215,10 +2215,11 @@
+diff -uNr bcm5700-2.2.19.orig/src/b57um.c bcm5700-2.2.19/src/b57um.c
+--- bcm5700-2.2.19.orig/src/b57um.c	Mon Apr  8 16:03:15 2002
++++ bcm5700-2.2.19/src/b57um.c	Mon Mar  3 21:51:00 2003
+@@ -2470,7 +2470,7 @@
  	}
  
  	if (pUmDevice->dev->mtu > 1500) {
 -		pDevice->RxMtu = pUmDevice->dev->mtu + 14;
 +		pDevice->RxMtu = pUmDevice->dev->mtu + 18;
- 		pDevice->RxJumboDescCnt = DEFAULT_JUMBO_RCV_DESC_COUNT;
- 	}
- 	else {
-+		pDevice->RxMtu = pUmDevice->dev->mtu + 18;
- 		pDevice->RxJumboDescCnt = 0;
  	}
  
-@@ -2242,7 +2243,7 @@
- 		rx_std_desc_cnt[index] = DEFAULT_RX_PACKET_DESC_COUNT;
+ 	if (T3_ASIC_REV(pDevice->ChipRevId) != T3_ASIC_REV_5700) {
+@@ -2502,7 +2502,7 @@
  	}
  	pDevice->RxStdDescCnt = rx_std_desc_cnt[index];
--	if ((mtu[index] > 1514) && ((rx_jumbo_desc_cnt[index] == 0) ||
-+	if ((mtu[index] > 1518) && ((rx_jumbo_desc_cnt[index] == 0) ||
- 		(rx_jumbo_desc_cnt[index] >= T3_JUMBO_RCV_RCB_ENTRY_COUNT))) {
- 		printk(KERN_WARNING "%s: Invalid rx_jumbo_desc_cnt parameter (%d), using %d\n", pUmDevice->dev->name, rx_jumbo_desc_cnt[index], DEFAULT_JUMBO_RCV_DESC_COUNT);
- 		rx_jumbo_desc_cnt[index] = DEFAULT_JUMBO_RCV_DESC_COUNT;
+ 
+-	if (mtu[index] <= 1514) {
++	if (mtu[index] <= 1518) {
+ 		rx_jumbo_desc_cnt[index] = 0;
+ 	}
+ 	else if ((rx_jumbo_desc_cnt[index] == 0) ||
+diff -uNr bcm5700-2.2.19.orig/src/lm.h bcm5700-2.2.19/src/lm.h
+--- bcm5700-2.2.19.orig/src/lm.h	Mon Apr  8 16:03:15 2002
++++ bcm5700-2.2.19/src/lm.h	Mon Mar  3 21:48:40 2003
+@@ -121,10 +121,10 @@
+ #define ETHERNET_ADDRESS_SIZE           6
+ #define ETHERNET_PACKET_HEADER_SIZE     14
+ #define MIN_ETHERNET_PACKET_SIZE        64      /* with 4 byte crc. */
+-#define MAX_ETHERNET_PACKET_SIZE        1518    /* with 4 byte crc. */
++#define MAX_ETHERNET_PACKET_SIZE        1522    /* with 4 byte crc. and 4 byte vlan */
+ #define MIN_ETHERNET_PACKET_SIZE_NO_CRC 60
+-#define MAX_ETHERNET_PACKET_SIZE_NO_CRC 1514
+-#define MAX_ETHERNET_PACKET_BUFFER_SIZE 1536    /* A nice even number. */
++#define MAX_ETHERNET_PACKET_SIZE_NO_CRC 1518
++#define MAX_ETHERNET_PACKET_BUFFER_SIZE 1540    /* A nice even number. */
+ 
+ #ifndef LM_MAX_MC_TABLE_SIZE
+ #define LM_MAX_MC_TABLE_SIZE            32
+diff -uNr bcm5700-2.2.19.orig/src/tigon3.h bcm5700-2.2.19/src/tigon3.h
+--- bcm5700-2.2.19.orig/src/tigon3.h	Mon Apr  8 16:03:15 2002
++++ bcm5700-2.2.19/src/tigon3.h	Mon Mar  3 21:49:38 2003
+@@ -148,12 +148,12 @@
+ #endif /* T3_JUMBO_RCV_RCB_ENTRY_COUNT */
+ #define T3_JUMBO_RCV_RCB_ENTRY_COUNT_MASK   (T3_JUMBO_RCV_RCB_ENTRY_COUNT-1)
+ 
+-#define MAX_JUMBO_RCV_BUFFER_SIZE           (10 * 1024) /* > 1514 */
+-#define DEFAULT_JUMBO_RCV_BUFFER_SIZE       (4 * 1024) /* > 1514 */
++#define MAX_JUMBO_RCV_BUFFER_SIZE           (10 * 1024) /* > 1518 */
++#define DEFAULT_JUMBO_RCV_BUFFER_SIZE       (4 * 1024) /* > 1518 */
+ #define DEFAULT_JUMBO_RCV_DESC_COUNT        128     /* Must be < 256. */
+ 
+-#define MAX_JUMBO_TX_BUFFER_SIZE            (8 * 1024) /* > 1514 */
+-#define DEFAULT_JUMBO_TX_BUFFER_SIZE        (4 * 1024) /* > 1514 */
++#define MAX_JUMBO_TX_BUFFER_SIZE            (8 * 1024) /* > 1518 */
++#define DEFAULT_JUMBO_TX_BUFFER_SIZE        (4 * 1024) /* > 1518 */
+ 
+ /* Number of receive return RCBs.  Maybe 1-16 but for now, only support one. */
+ #define T3_MAX_RCV_RETURN_RCB_COUNT         16
