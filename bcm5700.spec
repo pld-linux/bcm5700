@@ -79,6 +79,12 @@ rm -rf $RPM_BUILD_ROOT
 %postun
 /sbin/depmod -a
 
+%post -n kernel-smp-net-%{_orig_name}
+/sbin/depmod -a
+
+%postun -n kernel-smp-net-%{_orig_name}
+/sbin/depmod -a
+
 %files
 %defattr(644,root,root,755)
 %doc *.gz
