@@ -14,10 +14,11 @@ License:	GPL
 Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 Patch0:		%{_orig_name}-vlan-mtu.patch
+URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers }
 BuildRequires:	%{kgcc_package}
-Prereq:		/sbin/depmod
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
+Requires(post,postun):	/sbin/depmod
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -33,8 +34,8 @@ Summary:	Linux SMP driver for the 3Com Gigabit Server BCM5700 (3c996) Network In
 Summary(pl):	Sterownik dla Linuksa SMP do kart sieciowych gigabit ethernet BCM5700 (3c996)
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-Prereq:		/sbin/depmod
 %{!?_without_dist_kernel:%requires_releq_kernel_smp}
+Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-smp-net-%{_orig_name}
 Linux SMP driver for the 3Com Gigabit Server BCM5700 (3c996) Network
