@@ -1,4 +1,6 @@
 #
+# FOR 2.4 KERNELS! For 2.6 use tg3 (from kernel sources)
+#
 # Conditional build:
 # _without_dist_kernel          without distribution kernel
 #
@@ -15,7 +17,7 @@ Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 # Source0-md5:	9aa1e1b2183675df8e1cfd2974ca6a2e
 URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers }
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers < 2.6.0}
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
