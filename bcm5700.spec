@@ -12,7 +12,7 @@ Name:		bcm5700
 Version:	7.3.5
 %define		_rel	1
 Release:	%{_rel}
-License:	GPL
+License:	GPL v2
 Group:		Base/Kernel
 # extracted from http://www.broadcom.com/docs/driver_download/570x/linux-7.3.5.zip
 Source0:	%{name}-%{version}.tar.gz
@@ -20,7 +20,7 @@ Source0:	%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-headers > 2.6.7}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %endif
 Requires(post,postun):	/sbin/depmod
@@ -38,9 +38,11 @@ Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface
 Summary(pl):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
-%{?with_dist_kernel:Requires(postun):	kernel}
+%if %{with dist_kernel}
+%requires_releq_kernel_up
+Requires(postun):	%releq_kernel_up
+%endif
 Provides:	kernel-net(bcm5700)
 
 %description -n kernel-net-bcm5700
@@ -54,9 +56,11 @@ Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface
 Summary(pl):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
-%{?with_dist_kernel:Requires(postun):	kernel-smp}
+%if %{with dist_kernel}
+%requires_releq_kernel_smp
+Requires(postun):	%releq_kernel_smp
+%endif
 Provides:	kernel-net(bcm5700)
 
 %description -n kernel-smp-net-bcm5700
@@ -111,7 +115,6 @@ install bcm5700.4 $RPM_BUILD_ROOT%{_mandir}/man4
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net
-
 install bcm5700-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
 	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/bcm5700.ko
 %if %{with smp} && %{with dist_kernel}
