@@ -1,8 +1,8 @@
 #
-# FOR 2.4 KERNELS! For 2.6 use tg3 (from kernel sources)
+# For 2.6 use tg3, for 2.4.x try tg3 first (from kernel sources)
 #
 # Conditional build:
-# _without_dist_kernel          without distribution kernel
+%bcond_without	dist_kernel	# without distribution kernel
 #
 %define		_orig_name	bcm5700
 
@@ -17,10 +17,10 @@ Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 # Source0-md5:	9aa1e1b2183675df8e1cfd2974ca6a2e
 URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers < 2.6.0}
+%{?with_dist_kernel:BuildRequires:	kernel-headers < 2.6.0}
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
-%{!?_without_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -37,7 +37,7 @@ Summary:	Linux SMP driver for the 3Com Gigabit Server BCM5700 (3c996) Network In
 Summary(pl):	Sterownik dla Linuksa SMP do kart sieciowych gigabit ethernet BCM5700 (3c996)
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{!?_without_dist_kernel:%requires_releq_kernel_smp}
+%{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-smp-net-%{_orig_name}
@@ -53,10 +53,12 @@ Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700
 
 %build
 cd src
-%{__make} CC="%{kgcc} %{rpmcflags} -Wall -I%{_kernelsrcdir}/include -D__SMP__ -DCONFIG_X86_LOCAL_APIC"
+%{__make} \
+	CC="%{kgcc} %{rpmcflags} -Wall -I%{_kernelsrcdir}/include -D__SMP__ -DCONFIG_X86_LOCAL_APIC"
 mv -f %{_orig_name}.o ../%{_orig_name}-smp.o
 %{__make} clean
-%{__make} CC="%{kgcc} %{rpmcflags} -Wall -I%{_kernelsrcdir}/include"
+%{__make} \
+	CC="%{kgcc} %{rpmcflags} -Wall -I%{_kernelsrcdir}/include"
 
 %install
 rm -rf $RPM_BUILD_ROOT
