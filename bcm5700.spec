@@ -13,7 +13,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
-Patch0:		%{name}-vlan-mtu.patch
+Patch0:		%{_orig_name}-vlan-mtu.patch
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers }
 BuildRequires:	%{kgcc_package}
 Prereq:		/sbin/depmod
