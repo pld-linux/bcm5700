@@ -1,0 +1,25 @@
+diff -uNr bcm5700-2.0.28.orig/src/b57um.c bcm5700-2.0.28/src/b57um.c
+--- bcm5700-2.0.28.orig/src/b57um.c	Sat Nov  3 06:05:21 2001
++++ bcm5700-2.0.28/src/b57um.c	Sat Apr 27 14:35:35 2002
+@@ -2215,10 +2215,11 @@
+ 	}
+ 
+ 	if (pUmDevice->dev->mtu > 1500) {
+-		pDevice->RxMtu = pUmDevice->dev->mtu + 14;
++		pDevice->RxMtu = pUmDevice->dev->mtu + 18;
+ 		pDevice->RxJumboDescCnt = DEFAULT_JUMBO_RCV_DESC_COUNT;
+ 	}
+ 	else {
++		pDevice->RxMtu = pUmDevice->dev->mtu + 18;
+ 		pDevice->RxJumboDescCnt = 0;
+ 	}
+ 
+@@ -2242,7 +2243,7 @@
+ 		rx_std_desc_cnt[index] = DEFAULT_RX_PACKET_DESC_COUNT;
+ 	}
+ 	pDevice->RxStdDescCnt = rx_std_desc_cnt[index];
+-	if ((mtu[index] > 1514) && ((rx_jumbo_desc_cnt[index] == 0) ||
++	if ((mtu[index] > 1518) && ((rx_jumbo_desc_cnt[index] == 0) ||
+ 		(rx_jumbo_desc_cnt[index] >= T3_JUMBO_RCV_RCB_ENTRY_COUNT))) {
+ 		printk(KERN_WARNING "%s: Invalid rx_jumbo_desc_cnt parameter (%d), using %d\n", pUmDevice->dev->name, rx_jumbo_desc_cnt[index], DEFAULT_JUMBO_RCV_DESC_COUNT);
+ 		rx_jumbo_desc_cnt[index] = DEFAULT_JUMBO_RCV_DESC_COUNT;
