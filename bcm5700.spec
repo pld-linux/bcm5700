@@ -64,8 +64,6 @@ install %{_orig_name}-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/%
 install src/%{_orig_name}.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/%{_orig_name}.o
 install src/%{_orig_name}.4.gz $RPM_BUILD_ROOT%{_mandir}/man4
 
-gzip -9nf RELEASE.TXT
-
 %clean 
 rm -rf $RPM_BUILD_ROOT
 
@@ -83,12 +81,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc RELEASE.TXT
 /lib/modules/%{_kernel_ver}/misc/*
 %{_mandir}/man?/*
 
 %files -n kernel-smp-net-%{_orig_name}
 %defattr(644,root,root,755)
-%doc *.gz 
+%doc RELEASE.TXT 
 /lib/modules/%{_kernel_ver}smp/misc/*
 %{_mandir}/man?/*
