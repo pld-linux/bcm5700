@@ -1,5 +1,5 @@
 # conditional build
-# _without_dist_kernel          without distribution kernel
+# _without_dist_kernel		without distribution kernel
 
 %define		_orig_name	bcm5700
 
@@ -7,15 +7,16 @@ Summary:	Linux driver for the 3Com Gigabit Server BCM5700 (3c996) Network Interf
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700 (3c996)
 Name:		kernel-net-%{_orig_name}
 Version:	2.2.19
-%define	_rel	5
+%define	_rel	6
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://support.3com.com/infodeli/tools/nic/linux/%{_orig_name}-%{version}.tar.gz
 # Source0-md5:	192f8d94a801f6494aa3f8faa8ffc804
 Patch0:		%{_orig_name}-vlan-mtu.patch
+Patch1:		%{name}-alpha.patch
 URL:		http://support.3com.com/infodeli/tools/nic/linuxdownload.htm
-%{!?_without_dist_kernel:BuildRequires:         kernel-headers }
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers }
 BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.118
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
@@ -49,6 +50,7 @@ Sterownik dla Linuksa do kart sieciowych gigabit ethernet BCM5700
 %prep
 %setup -q -n %{_orig_name}-%{version} -c
 %patch0 -p1
+%patch1 -p1
 
 %build
 cd src
