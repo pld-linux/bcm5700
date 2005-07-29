@@ -3,28 +3,30 @@
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	smp		# don't build SMP module
-%bcond_without	userspace	# don't build userspace module
+%bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose build (V=1)
-#
+
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
+
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		bcm5700
-Version:	7.3.5
-%define		_rel	3
+Version:	8.1.55
+%define		_rel	1
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
-# extracted from http://www.broadcom.com/docs/driver_download/570x/linux-7.3.5.zip
+# extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.1.55.zip
 Source0:	%{name}-%{version}.tar.gz
-# Source0-md5:	28678cb977e24b27e40fdf27a5237a4d
+# Source0-md5:	d2461bef17b3c97365a581f4fb12cf5b
 Source1:	%{name}-Makefile
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %endif
-Requires(post,postun):	/sbin/depmod
-Requires:	kernel-net(bcm5700)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -43,7 +45,6 @@ Requires(post,postun):	/sbin/depmod
 %requires_releq_kernel_up
 Requires(postun):	%releq_kernel_up
 %endif
-Provides:	kernel-net(bcm5700)
 
 %description -n kernel-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
@@ -61,7 +62,6 @@ Requires(post,postun):	/sbin/depmod
 %requires_releq_kernel_smp
 Requires(postun):	%releq_kernel_smp
 %endif
-Provides:	kernel-net(bcm5700)
 
 %description -n kernel-smp-net-bcm5700
 Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
@@ -93,6 +93,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
+		%{?debug:DBG=1} \
 		CC="%{__cc}" CPP="%{__cpp}" \
 		M=$PWD O=$PWD \
 %ifarch ppc
