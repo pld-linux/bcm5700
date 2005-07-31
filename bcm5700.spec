@@ -86,6 +86,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 	touch include/config/MARKER
+
 	install %{SOURCE1} Makefile
 
 	%{__make} -C %{_kernelsrcdir} clean \
@@ -96,9 +97,6 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		%{?debug:DBG=1} \
 		CC="%{__cc}" CPP="%{__cpp}" \
 		M=$PWD O=$PWD \
-%ifarch ppc
-		EXTRA_CFLAGS="-msoft-float" \
-%endif
 		%{?with_verbose:V=1}
 
 	mv bcm5700{,-$cfg}.ko
