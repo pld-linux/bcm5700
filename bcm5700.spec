@@ -14,7 +14,7 @@ Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Car
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		bcm5700
 Version:	8.2.18
-%define		_rel	1
+%define		_rel	2
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
@@ -26,8 +26,16 @@ URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
+%ifarch sparc
+BuildRequires:  crosssparc64-gcc
+%endif
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%ifarch sparc
+%define         _target_base_arch       sparc64
+%define         _target_cpu             sparc64
+%endif
 
 %description
 This package contains the Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
@@ -84,7 +92,17 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	install -d include/{linux,config}
 	ln -sf %{_kernelsrcdir}/config-$cfg .config
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+%ifarch ppc
+        if [ -d "%{_kernelsrcdir}/include/asm-powerpc" ]; then
+                install -d include/asm
+                cp -a %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* include/asm
+                cp -a %{_kernelsrcdir}/include/asm-powerpc/* include/asm
+        else
+                ln -sf %{_kernelsrcdir}/include/asm-powerpc include/asm
+        fi
+%else
+        ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+%endif
 	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
 	touch include/config/MARKER
 
@@ -96,7 +114,12 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
 		%{?debug:DBG=1} \
-		CC="%{__cc}" CPP="%{__cpp}" \
+%if "%{_target_base_arch}" != "%{_arch}"
+                ARCH=%{_target_base_arch} \
+                CROSS_COMPILE=%{_target_cpu}-pld-linux- \
+%endif
+                HOSTCC="%{__cc}" \
+		CPP="%{__cpp}" \
 		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
 
