@@ -10,11 +10,15 @@
 %undefine	with_dist_kernel
 %endif
 
+%ifarch sparc
+%undefine	with_smp
+%endif
+
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		bcm5700
 Version:	8.2.18
-%define		_rel	3
+%define		_rel	4
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
@@ -26,16 +30,8 @@ URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
-%ifarch sparc
-BuildRequires:  crosssparc64-gcc
-%endif
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%ifarch sparc
-%define         _target_base_arch       sparc64
-%define         _target_base_cpu             sparc64
-%endif
 
 %description
 This package contains the Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
@@ -92,16 +88,12 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	install -d include/{linux,config}
 	ln -sf %{_kernelsrcdir}/config-$cfg .config
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-%ifarch ppc
-	if [ -d "%{_kernelsrcdir}/include/asm-powerpc" ]; then
-		install -d include/asm
-		cp -a %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* include/asm
-		cp -a %{_kernelsrcdir}/include/asm-powerpc/* include/asm
-	else
-		ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-	fi
+%ifarch ppc ppc64
+        install -d include/asm
+        [ ! -d %{_kernelsrcdir}/include/asm-powerpc ] || ln -sf %{_kernelsrcdir}/include/asm-powerpc/* include/asm
+        [ ! -d %{_kernelsrcdir}/include/asm-%{_target_base_arch} ] || ln -snf %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* include/asm
 %else
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+        ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 %endif
 	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
 	touch include/config/MARKER
