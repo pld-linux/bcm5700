@@ -14,11 +14,11 @@
 %undefine	with_smp
 %endif
 
+%define		_rel	5
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		bcm5700
 Version:	8.2.18
-%define		_rel	5
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
@@ -28,16 +28,18 @@ Source0:	%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-This package contains the Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
+This package contains the Linux driver for the Broadcom's NetXtreme
+BCM57xx Network Interface Cards.
 
 %description -l pl
-Pakiet zawiera sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
+Pakiet zawiera sterownik dla Linuksa do kart sieciowych Broadcom
+BCM57xx.
 
 %package -n kernel-net-bcm5700
 Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
@@ -51,7 +53,8 @@ Requires(postun):	%releq_kernel_up
 %endif
 
 %description -n kernel-net-bcm5700
-Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
+Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
+Cards.
 
 %description -n kernel-net-bcm5700 -l pl
 Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
@@ -68,7 +71,8 @@ Requires(postun):	%releq_kernel_smp
 %endif
 
 %description -n kernel-smp-net-bcm5700
-Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards.
+Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network
+Interface Cards.
 
 %description -n kernel-smp-net-bcm5700 -l pl
 Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx.
@@ -99,10 +103,10 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	%{__make} -C %{_kernelsrcdir} modules \
 		%{?debug:DBG=1} \
 %if "%{_target_base_arch}" != "%{_arch}"
-                ARCH=%{_target_base_arch} \
-                CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
+		ARCH=%{_target_base_arch} \
+		CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
 %endif
-                HOSTCC="%{__cc}" \
+		HOSTCC="%{__cc}" \
 		CPP="%{__cpp}" \
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
