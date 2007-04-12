@@ -2,17 +2,11 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose build (V=1)
 
 %if !%{with kernel}
 %undefine	with_dist_kernel
-%endif
-
-%ifarch sparc
-%undefine	with_smp
 %endif
 
 %define		_rel	5
@@ -29,8 +23,8 @@ Source0:	%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.7}
-BuildRequires:	rpmbuild(macros) >= 1.153
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.20.2}
+BuildRequires:	rpmbuild(macros) >= 1.379
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -49,8 +43,8 @@ Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
 %endif
 
 %description -n kernel-net-bcm5700
@@ -60,61 +54,11 @@ Cards.
 %description -n kernel-net-bcm5700 -l pl.UTF-8
 Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
 
-%package -n kernel-smp-net-bcm5700
-Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
-Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
-Release:	%{_rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-
-%description -n kernel-smp-net-bcm5700
-Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network
-Interface Cards.
-
-%description -n kernel-smp-net-bcm5700 -l pl.UTF-8
-Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx.
-
 %prep
 %setup -q
 
 %build
-cd src
-
-%if %{with kernel}
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	install -d o/include/linux
-	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-	%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-
-	install %{SOURCE1} Makefile
-
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-		%{?debug:DBG=1} \
-%if "%{_target_base_arch}" != "%{_arch}"
-		ARCH=%{_target_base_arch} \
-		CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
-%endif
-		HOSTCC="%{__cc}" \
-		CPP="%{__cpp}" \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-
-	mv bcm5700{,-$cfg}.ko
-done
-%endif
+%build_kernel_modules -C src -m bcm5700
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -144,12 +88,6 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-n kernel-net-bcm5700
 %depmod %{_kernel_ver}
 
-%post	-n kernel-smp-net-bcm5700
-%depmod %{_kernel_ver}smp
-
-%postun	-n kernel-smp-net-bcm5700
-%depmod %{_kernel_ver}smp
-
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
@@ -158,15 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel-net-bcm5700
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/bcm5700.ko*
-%endif
-
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel-smp-net-bcm5700
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/bcm5700.ko*
-%endif
 %endif
