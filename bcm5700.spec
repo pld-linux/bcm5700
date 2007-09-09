@@ -9,18 +9,19 @@
 %undefine	with_dist_kernel
 %endif
 
-%define		_rel	5
+%define		_rel	1
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		bcm5700
-Version:	8.2.18
+Version:	8.3.14
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
-# extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.1.55.zip
+# extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.3.14.zip
 Source0:	%{name}-%{version}.tar.gz
-# Source0-md5:	44985b0aebf031c343d4f29b5432cf85
+# Source0-md5:	6dd814821f26ad67c7d7ce61c5275ca0
 Source1:	%{name}-Makefile
+Patch0:		bcm5700-2.6.22.patch
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.20.2}
@@ -56,6 +57,7 @@ Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %build_kernel_modules -C src -m bcm5700
@@ -70,13 +72,7 @@ install bcm5700.4 $RPM_BUILD_ROOT%{_mandir}/man4
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/net
-install bcm5700-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/net/bcm5700.ko
-%if %{with smp} && %{with dist_kernel}
-install bcm5700-smp.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/bcm5700.ko
-%endif
+%install_kernel_modules -m bcm5700 -d kernel/drivers/net
 %endif
 
 %clean
