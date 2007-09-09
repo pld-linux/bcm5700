@@ -21,7 +21,7 @@ Group:		Base/Kernel
 Source0:	%{name}-%{version}.tar.gz
 # Source0-md5:	6dd814821f26ad67c7d7ce61c5275ca0
 Source1:	%{name}-Makefile
-Patch0:		bcm5700-2.6.22.patch
+Patch0:		%{name}-2.6.22.patch
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.20.2}
