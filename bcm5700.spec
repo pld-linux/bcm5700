@@ -33,9 +33,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This package contains the Linux driver for the Broadcom's NetXtreme
 BCM57xx Network Interface Cards.
 
+Note: this driver is obsoleted by Broadcom, use tg3 instead.
+
 %description -l pl.UTF-8
 Pakiet zawiera sterownik dla Linuksa do kart sieciowych Broadcom
 BCM57xx.
+
+Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 
 %package -n kernel-net-bcm5700
 Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
@@ -51,11 +55,13 @@ Requires(postun):	%releq_kernel
 %description -n kernel-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
 Cards.
+
 Note: this driver is obsoleted by Broadcom, use tg3 instead.
 
 %description -n kernel-net-bcm5700 -l pl.UTF-8
 Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
-Uwaga: ten sterownik Broadcomu jest przestarzały, użyj tg3.
+
+Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 
 %prep
 %setup -q
