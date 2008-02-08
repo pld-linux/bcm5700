@@ -23,7 +23,7 @@ Version:	8.3.14
 Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
-# extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.1.55.zip
+# extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.3.14.zip
 Source0:	%{name}-%{version}.tar.gz
 # Source0-md5:	6dd814821f26ad67c7d7ce61c5275ca0
 Source1:	%{name}-Makefile
