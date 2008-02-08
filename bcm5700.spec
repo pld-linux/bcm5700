@@ -51,9 +51,11 @@ Requires(postun):	%releq_kernel
 %description -n kernel-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
 Cards.
+Note: this driver is obsoleted by Broadcom, use tg3 instead.
 
 %description -n kernel-net-bcm5700 -l pl.UTF-8
 Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
+Uwaga: ten sterownik Broadcomu jest przestarzały, użyj tg3.
 
 %prep
 %setup -q
