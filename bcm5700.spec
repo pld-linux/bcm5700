@@ -5,14 +5,18 @@
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose build (V=1)
 
-%if !%{with kernel}
+%if %{without kernel}
 %undefine	with_dist_kernel
+%endif
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
 %endif
 
 %define		_rel	1
+%define		pname	bcm5700
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
-Name:		bcm5700
+Name:		%{pname}%{_alt_kernel}
 Version:	8.3.14
 Release:	%{_rel}
 License:	GPL v2
@@ -23,10 +27,8 @@ Source0:	%{name}-%{version}.tar.gz
 Source1:	%{name}-Makefile
 Patch0:		%{name}-2.6.22.patch
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
-%if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.20.2}
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 BuildRequires:	rpmbuild(macros) >= 1.379
-%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -41,7 +43,7 @@ BCM57xx.
 
 Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 
-%package -n kernel-net-bcm5700
+%package -n kernel%{_alt_kernel}-net-bcm5700
 Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -52,13 +54,13 @@ Requires(post,postun):	/sbin/depmod
 Requires(postun):	%releq_kernel
 %endif
 
-%description -n kernel-net-bcm5700
+%description -n kernel%{_alt_kernel}-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
 Cards.
 
 Note: this driver is obsoleted by Broadcom, use tg3 instead.
 
-%description -n kernel-net-bcm5700 -l pl.UTF-8
+%description -n kernel%{_alt_kernel}-net-bcm5700 -l pl.UTF-8
 Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
 
 Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
@@ -86,11 +88,17 @@ install bcm5700.4 $RPM_BUILD_ROOT%{_mandir}/man4
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-n kernel-net-bcm5700
+%post	-n kernel%{_alt_kernel}-net-bcm5700
 %depmod %{_kernel_ver}
 
-%postun	-n kernel-net-bcm5700
+%postun	-n kernel%{_alt_kernel}-net-bcm5700
 %depmod %{_kernel_ver}
+
+%post	-n kernel%{_alt_kernel}-smp-net-bcm5700
+%depmod %{_kernel_ver}smp
+
+%postun	-n kernel%{_alt_kernel}-smp-net-bcm5700
+%depmod %{_kernel_ver}smp
 
 %if %{with userspace}
 %files
@@ -100,7 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%files -n kernel-net-bcm5700
+%files -n kernel%{_alt_kernel}-net-bcm5700
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/bcm5700.ko*
 %endif
