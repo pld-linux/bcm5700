@@ -7,7 +7,7 @@
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose build (V=1)
 
-%if !%{with kernel}
+%if %{without kernel}
 %undefine	with_dist_kernel
 %endif
 
@@ -20,7 +20,7 @@ Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Car
 Summary(pl.UTF-8):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		bcm5700
 Version:	8.3.14
-Release:	%{_rel}
+Release:	2
 License:	GPL v2
 Group:		Base/Kernel
 # extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.3.14.zip
@@ -49,13 +49,9 @@ Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 %package -n kernel-net-bcm5700
 Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
-Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
-%endif
 
 %description -n kernel-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
@@ -71,13 +67,9 @@ Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 %package -n kernel-smp-net-bcm5700
 Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
-Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
 
 %description -n kernel-smp-net-bcm5700
 Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network
