@@ -126,13 +126,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
 %if %{with up} || %{without dist_kernel}
-%files -n kernel-net-bcm5700
+%files -n kernel%{_alt_kernel}-net-bcm5700
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/bcm5700.ko*
 %endif
 
 %if %{with smp} && %{with dist_kernel}
-%files -n kernel-smp-net-bcm5700
+%files -n kernel%{_alt_kernel}-smp-net-bcm5700
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/bcm5700.ko*
 %endif
