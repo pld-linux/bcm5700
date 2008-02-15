@@ -23,7 +23,7 @@ Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Car
 Summary(pl.UTF-8):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		%{pname}%{_alt_kernel}
 Version:	8.3.14
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Base/Kernel
 # extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.3.14.zip
