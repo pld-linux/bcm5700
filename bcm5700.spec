@@ -22,10 +22,10 @@ Release:	%{_rel}
 License:	GPL v2
 Group:		Base/Kernel
 # extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.3.14.zip
-Source0:	%{name}-%{version}.tar.gz
+Source0:	%{pname}-%{version}.tar.gz
 # Source0-md5:	6dd814821f26ad67c7d7ce61c5275ca0
-Source1:	%{name}-Makefile
-Patch0:		%{name}-2.6.22.patch
+Source1:	%{pname}-Makefile
+Patch0:		%{pname}-2.6.22.patch
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -66,8 +66,14 @@ Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
 Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 
 %prep
-%setup -q
-%patch0 -p1
+%setup -q -n %{pname}-%{version}
+
+mv src/Makefile{,.orig}
+cat > src/Makefile << EOF
+obj-m += bcm5700.o
+bcm5700-objs := b57um.o b57proc.o tigon3.o autoneg.o 5701rls.o tcp_seg.o b57diag.o
+EXTRA_CFLAGS = -DDBG=0 -DT3_JUMBO_RCV_RCB_ENTRY_COUNT=256 -DNICE_SUPPORT -DPCIX_TARGET_WORKAROUND=1 -DINCLUDE_TBI_SUPPORT -DINCLUDE_5701_AX_FIX=1
+EOF
 
 %build
 %build_kernel_modules -C src -m bcm5700
