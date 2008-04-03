@@ -67,6 +67,7 @@ Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 
 %prep
 %setup -q -n %{pname}-%{version}
+%patch0 -p1
 
 mv src/Makefile{,.orig}
 cat > src/Makefile << EOF
