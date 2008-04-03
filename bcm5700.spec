@@ -12,7 +12,7 @@
 %undefine	with_userspace
 %endif
 
-%define		rel	1
+%define		rel	4
 %define		pname	bcm5700
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
