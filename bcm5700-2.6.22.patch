@@ -1,0 +1,99 @@
+diff -upr bcm5700-8.3.14./src/b57um.c bcm5700-8.3.14/src/b57um.c
+--- bcm5700-8.3.14./src/b57um.c	2005-11-03 00:08:15.000000000 +0000
++++ bcm5700-8.3.14/src/b57um.c	2007-09-09 22:04:40.896315249 +0000
+@@ -2014,7 +2014,7 @@ bcm5700_vlan_rx_kill_vid(struct net_devi
+ 	bcm5700_intr_off(pUmDevice);
+ 	bcm5700_poll_wait(pUmDevice);
+ 	if (pUmDevice->vlgrp) {
+-		pUmDevice->vlgrp->vlan_devices[vid] = NULL;
++		pUmDevice->vlgrp->vlan_devices_arrays[vid] = NULL;
+ 	}
+ 	bcm5700_intr_on(pUmDevice);
+ }
+@@ -2074,7 +2074,7 @@ bcm5700_start_xmit(struct sk_buff *skb, 
+ 	pUmPacket = (PUM_PACKET) pPacket;
+ 	pUmPacket->skbuff = skb;
+ 
+-	if (skb->ip_summed == CHECKSUM_HW) {
++	if (skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		pPacket->Flags = SND_BD_FLAG_TCP_UDP_CKSUM;
+ #if TIGON3_DEBUG
+ 		pUmDevice->tx_chksum_count++;
+@@ -2121,8 +2121,9 @@ bcm5700_start_xmit(struct sk_buff *skb, 
+ #endif
+ 
+ #ifdef BCM_TSO
+-	if ((mss = (LM_UINT32) skb_shinfo(skb)->tso_size) &&
++	if (skb_is_gso(skb) &&
+ 		(skb->len > pDevice->TxMtu)) {
++		mss = (LM_UINT32) skb_shinfo(skb)->gso_size;
+ 
+ #if (LINUX_VERSION_CODE >= 0x02060c)
+ 
+@@ -2139,34 +2140,34 @@ bcm5700_start_xmit(struct sk_buff *skb, 
+ 			SND_BD_FLAG_CPU_POST_DMA;
+ 
+ 		tcp_opt_len = 0;
+-		if (skb->h.th->doff > 5) {
+-			tcp_opt_len = (skb->h.th->doff - 5) << 2;
++		if (tcp_hdr(skb)->doff > 5) {
++			tcp_opt_len = (tcp_hdr(skb)->doff - 5) << 2;
+ 		}
+-		ip_tcp_len = (skb->nh.iph->ihl << 2) + sizeof(struct tcphdr);
+-		skb->nh.iph->check = 0;
++		ip_tcp_len = (ip_hdr(skb)->ihl << 2) + sizeof(struct tcphdr);
++		ip_hdr(skb)->check = 0;
+ 
+ 		if ( T3_ASIC_IS_575X_PLUS(pDevice->ChipRevId) ){
+-			skb->h.th->check = 0;
++			tcp_hdr(skb)->check = 0;
+ 			pPacket->Flags &= ~SND_BD_FLAG_TCP_UDP_CKSUM;
+ 		}
+ 		else {
+-			skb->h.th->check = ~csum_tcpudp_magic(
+-				skb->nh.iph->saddr, skb->nh.iph->daddr,
++			tcp_hdr(skb)->check = ~csum_tcpudp_magic(
++				ip_hdr(skb)->saddr, ip_hdr(skb)->daddr,
+ 				0, IPPROTO_TCP, 0);
+ 		}
+ 
+-		skb->nh.iph->tot_len = htons(mss + ip_tcp_len + tcp_opt_len);
++		ip_hdr(skb)->tot_len = htons(mss + ip_tcp_len + tcp_opt_len);
+ 		tcp_seg_flags = 0;
+ 
+-		if (tcp_opt_len || (skb->nh.iph->ihl > 5)) {
++		if (tcp_opt_len || (ip_hdr(skb)->ihl > 5)) {
+ 			if ( T3_ASIC_IS_5705_BEYOND(pDevice->ChipRevId) ){
+ 				tcp_seg_flags =
+-					((skb->nh.iph->ihl - 5) +
++					((ip_hdr(skb)->ihl - 5) +
+ 					(tcp_opt_len >> 2)) << 11;
+ 			}
+ 			else {
+ 				pPacket->Flags |=
+-					((skb->nh.iph->ihl - 5) +
++					((ip_hdr(skb)->ihl - 5) +
+ 					(tcp_opt_len >> 2)) << 12;
+ 			}
+ 		}
+@@ -4560,7 +4561,7 @@ static struct pci_driver bcm5700_pci_dri
+ 
+ static int __init bcm5700_init_module (void)
+ {
+-	return pci_module_init(&bcm5700_pci_driver);
++	return pci_register_driver(&bcm5700_pci_driver);
+ }
+ 
+ 
+--- bcm5700-8.3.14/src/mm.h~	2005-11-03 02:08:15.000000000 +0200
++++ bcm5700-8.3.14/src/mm.h	2008-04-03 23:02:40.066478548 +0300
+@@ -29,6 +29,9 @@
+ #define __NO_VERSION__
+ #endif
+ #include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)
++#include <linux/utsrelease.h>
++#endif
+ 
+ #ifdef MODULE
+ 
