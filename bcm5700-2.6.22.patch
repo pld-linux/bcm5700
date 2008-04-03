@@ -85,15 +85,15 @@ diff -upr bcm5700-8.3.14./src/b57um.c bcm5700-8.3.14/src/b57um.c
  }
  
  
-Only in bcm5700-8.3.14/src: b57um.c~
-diff -upr bcm5700-8.3.14./src/mm.h bcm5700-8.3.14/src/mm.h
---- bcm5700-8.3.14./src/mm.h	2005-11-03 00:08:15.000000000 +0000
-+++ bcm5700-8.3.14/src/mm.h	2007-09-09 22:02:57.486837749 +0000
-@@ -29,6 +29,7 @@
+--- bcm5700-8.3.14/src/mm.h~	2005-11-03 02:08:15.000000000 +0200
++++ bcm5700-8.3.14/src/mm.h	2008-04-03 23:02:40.066478548 +0300
+@@ -29,6 +29,9 @@
  #define __NO_VERSION__
  #endif
  #include <linux/version.h>
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)
 +#include <linux/utsrelease.h>
++#endif
  
  #ifdef MODULE
  
