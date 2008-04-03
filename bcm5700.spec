@@ -52,10 +52,7 @@ Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
