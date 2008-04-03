@@ -31,6 +31,9 @@ URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+
 %description
 This package contains the Linux driver for the Broadcom's NetXtreme
 BCM57xx Network Interface Cards.
