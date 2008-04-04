@@ -30,7 +30,7 @@ URL:		http://www.broadcom.com/drivers/downloaddrivers.php
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 BuildRequires:	rpmbuild(macros) >= 1.379
 # broken build
-ExcludeArch:	%{x8664} alpha
+ExcludeArch:	%{x8664} alpha sparc64 ppc64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # nothing to be placed to debuginfo package
