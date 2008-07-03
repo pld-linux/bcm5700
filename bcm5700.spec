@@ -2,8 +2,6 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose build (V=1)
 
@@ -13,26 +11,30 @@
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
-
-%ifarch sparc
-%undefine	with_smp
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
 %endif
 
+%define		rel	4
 %define		pname	bcm5700
 Summary:	Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa do kart sieciowych Broadcom NetXtreme BCM57xx
 Name:		%{pname}%{_alt_kernel}
 Version:	8.3.14
-Release:	3
+Release:	%{rel}
 License:	GPL v2
 Group:		Base/Kernel
 # extracted from http://www.broadcom.com/docs/driver_download/570x/linux-8.3.14.zip
 Source0:	%{pname}-%{version}.tar.gz
 # Source0-md5:	6dd814821f26ad67c7d7ce61c5275ca0
 Source1:	%{pname}-Makefile
+Patch0:		%{pname}-2.6.22.patch
 URL:		http://www.broadcom.com/drivers/downloaddrivers.php
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
-BuildRequires:	rpmbuild(macros) >= 1.379
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
+BuildRequires:	rpmbuild(macros) >= 1.452
+# broken build
+ExcludeArch:	%{x8664} alpha sparc64 ppc64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -50,9 +52,10 @@ Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 %package -n kernel%{_alt_kernel}-net-bcm5700
 Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
 Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-net-bcm5700
 Linux driver for the Broadcom's NetXtreme BCM57xx Network Interface
@@ -65,26 +68,9 @@ Sterownik dla Linuksa do kart sieciowych Broadcom BCM57xx.
 
 Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
 
-%package -n kernel%{_alt_kernel}-smp-net-bcm5700
-Summary:	Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network Interface Cards
-Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx
-Group:		Base/Kernel
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
-Requires(post,postun):	/sbin/depmod
-
-%description -n kernel%{_alt_kernel}-smp-net-bcm5700
-Linux SMP driver for the Broadcom's NetXtreme BCM57xx Network
-Interface Cards.
-
-Note: this driver is obsoleted by Broadcom, use tg3 instead.
-
-%description -n kernel%{_alt_kernel}-smp-net-bcm5700 -l pl.UTF-8
-Sterownik dla Linuksa SMP do kart sieciowych Broadcom BCM57xx.
-
-Uwaga: ten sterownik Broadcomu jest przestarzały, należy używać tg3.
-
 %prep
 %setup -q -n %{pname}-%{version}
+%patch0 -p1
 
 mv src/Makefile{,.orig}
 cat > src/Makefile << EOF
@@ -118,12 +104,6 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-n kernel%{_alt_kernel}-net-bcm5700
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-smp-net-bcm5700
-%depmod %{_kernel_ver}smp
-
-%postun	-n kernel%{_alt_kernel}-smp-net-bcm5700
-%depmod %{_kernel_ver}smp
-
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
@@ -132,15 +112,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-net-bcm5700
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/bcm5700.ko*
-%endif
-
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel%{_alt_kernel}-smp-net-bcm5700
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/net/bcm5700.ko*
-%endif
 %endif
